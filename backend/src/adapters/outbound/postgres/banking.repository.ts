@@ -1,0 +1,23 @@
+import { pool } from "../../../infrastructure/db/connection";
+import { BankingRepository } from "../../../core/ports/banking.repository";
+
+export class BankingRepositoryImpl implements BankingRepository {
+  async saveBank(shipId: string, year: number, amount: number) {
+    await pool.query(
+      `INSERT INTO bank_entries (ship_id, year, amount_gco2eq)
+       VALUES ($1, $2, $3)`,
+      [shipId, year, amount]
+    );
+  }
+
+  async getTotalBanked(shipId: string, year: number): Promise<number> {
+    const result = await pool.query(
+      `SELECT COALESCE(SUM(amount_gco2eq), 0) AS total
+       FROM bank_entries
+       WHERE ship_id = $1 AND year = $2`,
+      [shipId, year]
+    );
+
+    return Number(result.rows[0].total);
+  }
+}
