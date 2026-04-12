@@ -28,4 +28,15 @@ export class BankingRepositoryImpl implements BankingRepository {
       [shipId, year, -amount],
     );
   }
+  async getBankedByYear(year: number) {
+    const result = await pool.query(
+      `SELECT ship_id, SUM(amount_gco2eq) AS total
+     FROM bank_entries
+     WHERE year = $1
+     GROUP BY ship_id`,
+      [year],
+    );
+
+    return result.rows;
+  }
 }
