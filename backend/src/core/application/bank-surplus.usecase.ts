@@ -4,7 +4,7 @@ import { RouteRepository } from "../ports/route.repository";
 export class BankSurplusUseCase {
   constructor(
     private routeRepo: RouteRepository,
-    private bankingRepo: BankingRepository
+    private bankingRepo: BankingRepository,
   ) {}
 
   async execute(routeId: string) {
