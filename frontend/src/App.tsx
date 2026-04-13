@@ -1,6 +1,7 @@
 import { useState } from "react";
 import RoutesPage from "./adapters/ui/routes/RoutesPage";
 import ComparePage from "./adapters/ui/routes/ComparePage";
+import BankingPage from "./adapters/ui/routes/BankingPage";
 
 export default function App() {
   const [tab, setTab] = useState("routes");
@@ -31,7 +32,8 @@ export default function App() {
       <div className="max-w-6xl mx-auto mt-6">
         {tab === "routes" && <RoutesPage />}
         {tab === "compare" && <ComparePage />}
-        {tab !== "routes" && tab !== "compare" && (
+        {tab === "banking" && <BankingPage />}
+        {tab !== "routes" && tab !== "compare" && tab !== "banking" && (
           <div className="text-center text-gray-400">Coming soon...</div>
         )}
       </div>

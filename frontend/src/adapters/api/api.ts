@@ -16,4 +16,26 @@ export const api = {
     const res = await fetch(`${BASE_URL}/routes/comparison`);
     return res.json();
   },
+
+  bank: async (routeId: string) => {
+    const res = await fetch(`${BASE_URL}/banking/bank`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ routeId }),
+    });
+    return res.json();
+  },
+
+  apply: async (routeId: string, amount: number) => {
+    const res = await fetch(`${BASE_URL}/banking/apply`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ routeId, amount }),
+    });
+    return res.json();
+  },
 };
