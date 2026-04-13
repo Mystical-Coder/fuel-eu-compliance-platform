@@ -4,7 +4,7 @@ import { PoolRepository } from "../ports/pool.repository";
 export class CreatePoolUseCase {
   constructor(
     private routeRepo: RouteRepository,
-    private poolRepo: PoolRepository
+    private poolRepo: PoolRepository,
   ) {}
 
   async execute(routeIds: string[]) {
@@ -60,7 +60,23 @@ export class CreatePoolUseCase {
       }
     }
 
-    const year = new Date().getFullYear();
+    const years = new Set<number>();
+
+    for (const id of routeIds) {
+      const route = routes.find((r) => r.routeId === id);
+
+      if (!route || route.year === undefined) {
+        throw new Error(`Invalid year for route ${id}`);
+      }
+
+      years.add(route.year);
+    }
+
+    if (years.size !== 1) {
+      throw new Error("All routes must belong to same year");
+    }
+
+    const year = [...years][0];
     const poolId = await this.poolRepo.createPool(year);
 
     for (const m of members) {
@@ -68,7 +84,7 @@ export class CreatePoolUseCase {
         poolId,
         m.shipId,
         Number(m.cbBefore.toFixed(2)),
-        Number(m.cbAfter.toFixed(2))
+        Number(m.cbAfter.toFixed(2)),
       );
     }
 
