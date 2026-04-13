@@ -62,4 +62,8 @@ export const api = {
     );
     return res.json();
   },
+  getCBByRoute: async (routeId: string) => {
+    const res = await fetch(`${BASE_URL}/compliance/cb/${routeId}`);
+    return res.json();
+  },
 };

@@ -22,6 +22,14 @@ type BankingRecord = {
   amount: number;
 };
 
+type RouteCB = {
+  routeId: string;
+  year: number;
+  target: number;
+  cb: number;
+  status: "Surplus" | "Deficit";
+};
+
 export default function BankingPage() {
   const [routeId, setRouteId] = useState("");
   const [amount, setAmount] = useState<string>("");
@@ -29,7 +37,7 @@ export default function BankingPage() {
   const [cbList, setCbList] = useState<CB[]>([]);
   const [records, setRecords] = useState<BankingRecord[]>([]);
   const [year, setYear] = useState(2024);
-
+  const [singleCB, setSingleCB] = useState<RouteCB | null>(null);
 
   const format = (num: number) =>
     new Intl.NumberFormat().format(num);
@@ -55,10 +63,15 @@ export default function BankingPage() {
     setResult(res);
   };
 
+  const handleGetCB = async () => {
+    if (!routeId) return alert("Enter route ID");
+    const res = await api.getCBByRoute(routeId);
+    setSingleCB(res);
+  };
+
   return (
     <div>
       <h2 className="text-xl font-semibold mb-6">Banking</h2>
-
 
       <div className="bg-gray-800 p-4 rounded mb-6 shadow">
         <div className="flex items-center justify-between mb-4">
@@ -132,7 +145,6 @@ export default function BankingPage() {
           </table>
         </div>
 
-
         <div className="mt-4 p-3 bg-gray-900 rounded flex justify-between">
           <span className="text-gray-400">Total Banked</span>
           <span className="font-bold text-lg text-white">
@@ -142,7 +154,6 @@ export default function BankingPage() {
           </span>
         </div>
       </div>
-
 
       <div className="bg-gray-800 p-4 rounded mb-6 space-y-4 shadow">
         <input
@@ -177,14 +188,19 @@ export default function BankingPage() {
           >
             Apply Banking
           </button>
+
+          <button
+            className="bg-purple-500 px-4 py-2 rounded hover:bg-purple-600"
+            onClick={handleGetCB}
+          >
+            Get Route CB
+          </button>
         </div>
       </div>
-
 
       {result?.error && (
         <div className="text-red-400 mb-4">{result.error}</div>
       )}
-
 
       {result && !result.error && (
         <div className="bg-gray-800 p-4 rounded space-y-2 shadow">
@@ -201,6 +217,46 @@ export default function BankingPage() {
               <p>CB After: {format(result.cb_after!)}</p>
             </>
           )}
+        </div>
+      )}
+
+      {singleCB && (
+        <div className="bg-gray-800 p-4 rounded mt-4 shadow">
+          <h3 className="mb-2 text-lg font-semibold">
+            Route CB Details
+          </h3>
+
+          <div className="space-y-1">
+            <p>Route: {singleCB.routeId}</p>
+            <p>Year: {singleCB.year}</p>
+            <p>Target: {singleCB.target}</p>
+
+            <p>
+              CB:{" "}
+              <span
+                className={
+                  singleCB.cb >= 0
+                    ? "text-green-400"
+                    : "text-red-400"
+                }
+              >
+                {format(singleCB.cb)}
+              </span>
+            </p>
+
+            <p>
+              Status:{" "}
+              <span
+                className={
+                  singleCB.status === "Surplus"
+                    ? "text-green-400"
+                    : "text-red-400"
+                }
+              >
+                {singleCB.status}
+              </span>
+            </p>
+          </div>
         </div>
       )}
     </div>
