@@ -8,6 +8,10 @@ export class ApplyBankedUseCase {
   ) {}
 
   async execute(routeId: string, amount: number) {
+    if (amount <= 0) {
+      throw new Error("Amount must be greater than 0");
+    }
+
     const routes = await this.routeRepo.findAll();
     const route = routes.find((r) => r.routeId === routeId);
 
