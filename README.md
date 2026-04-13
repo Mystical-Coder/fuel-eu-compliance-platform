@@ -114,6 +114,12 @@ cd backend
 npm install
 ```
 
+### Load Seed Data
+
+Run the following command to populate initial data:
+
+psql -U postgres -d your_database -f src/infrastructure/db/seed.sql
+
 ### Configure Environment
 
 Create `.env` file:
