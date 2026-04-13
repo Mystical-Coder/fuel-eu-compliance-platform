@@ -42,4 +42,14 @@ export const api = {
     const res = await fetch(`${BASE_URL}/compliance/cb?year=${year}`);
     return res.json();
   },
+  createPool: async (routeIds: string[]) => {
+    const res = await fetch(`${BASE_URL}/pools`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ routeIds }),
+    });
+    return res.json();
+  },
 };
