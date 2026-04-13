@@ -56,4 +56,10 @@ export const api = {
     const res = await fetch(`${BASE_URL}/compliance/adjusted-cb?year=${year}`);
     return res.json();
   },
+  getBankingRecords: async (year: number) => {
+    const res = await fetch(
+      `${BASE_URL}/banking/records?year=${year}&shipId=GLOBAL`,
+    );
+    return res.json();
+  },
 };
