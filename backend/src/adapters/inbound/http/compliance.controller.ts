@@ -12,11 +12,11 @@ const routeRepo = new RouteRepositoryImpl();
 const complianceRepo = new ComplianceRepositoryImpl();
 
 const computeCBUseCase = new ComputeCBUseCase(routeRepo, complianceRepo);
-const getCBUseCase = new GetCBUseCase(complianceRepo);
+const getCBUseCase = new GetCBUseCase(complianceRepo, routeRepo);
 const bankingRepo = new BankingRepositoryImpl();
 const getAdjustedCBUseCase = new GetAdjustedCBUseCase(
   complianceRepo,
-  bankingRepo
+  bankingRepo,
 );
 
 router.get("/compliance/cb/:routeId", async (req, res) => {

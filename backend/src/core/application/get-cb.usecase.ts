@@ -1,15 +1,34 @@
 import { ComplianceRepository } from "../ports/compliance.repository";
+import { RouteRepository } from "../ports/route.repository";
 
 export class GetCBUseCase {
-  constructor(private complianceRepo: ComplianceRepository) {}
+  constructor(
+    private complianceRepo: ComplianceRepository,
+    private routeRepo: RouteRepository
+  ) {}
 
   async execute(year: number) {
-    const data = await this.complianceRepo.getCBByYear(year);
+    const TARGET = 89.3368;
 
-    return data.map((row) => ({
-      shipId: row.ship_id,
-      year: row.year,
-      cb: Number(Number(row.cb_gco2eq).toFixed(2)),
-    }));
+    const routes = await this.routeRepo.findAll();
+
+    const filteredRoutes = routes.filter((r) => r.year === year);
+
+    const result = [];
+
+    for (const route of filteredRoutes) {
+      const energy = route.fuelConsumption * 41000;
+      const cb = (TARGET - route.ghgIntensity) * energy;
+
+      await this.complianceRepo.saveCB(route.routeId, route.year, cb);
+
+      result.push({
+        shipId: route.routeId,
+        year: route.year,
+        cb: Number(cb.toFixed(2)),
+      });
+    }
+
+    return result.sort((a, b) => b.cb - a.cb);
   }
 }
