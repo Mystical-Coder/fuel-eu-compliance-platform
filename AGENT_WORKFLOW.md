@@ -13,7 +13,7 @@
 
 ## Prompts & Outputs
 
-### Example 1: Banking Architecture Inconsistency
+### Banking Architecture Inconsistency
 
 **Prompt:**
 Banking and apply logic mismatch (global vs per ship). How to fix?
@@ -26,7 +26,7 @@ Banking and apply logic mismatch (global vs per ship). How to fix?
 
 ---
 
-### Example 2: Lazy CB Computation Issue
+### Lazy CB Computation Issue
 
 **Prompt:**
 CB API returns partial data unless computed earlier.
@@ -39,7 +39,7 @@ CB API returns partial data unless computed earlier.
 
 ---
 
-### Example 3: Controller Breaking Architecture
+### Controller Breaking Architecture
 
 **Prompt:**
 Direct DB query in controller violates hexagonal architecture.
@@ -72,7 +72,7 @@ Direct DB query in controller violates hexagonal architecture.
 
 # Frontend Workflow
 
-## Example 1: Derived State Optimization for Filtering
+## Derived State Optimization for Filtering
 
 **Prompt:**
 Filtering routes dynamically caused unnecessary re-renders and performance inefficiency.
@@ -85,7 +85,7 @@ Filtering routes dynamically caused unnecessary re-renders and performance ineff
 
 ---
 
-## Example 2: Centralized API Layer for Consistent Data Handling
+## Centralized API Layer for Consistent Data Handling
 
 **Prompt:**
 Direct fetch calls across components led to inconsistent error handling and duplication.
@@ -98,7 +98,7 @@ Direct fetch calls across components led to inconsistent error handling and dupl
 
 ---
 
-## Example 3: Controlled Form State with Type-Safe Transformation
+## Controlled Form State with Type-Safe Transformation
 
 **Prompt:**
 Handling numeric inputs in forms caused type inconsistencies between UI state and API payload.
