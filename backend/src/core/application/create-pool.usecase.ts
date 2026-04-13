@@ -1,11 +1,13 @@
 import { RouteRepository } from "../ports/route.repository";
 import { PoolRepository } from "../ports/pool.repository";
+import { ComplianceRepository } from "../ports/compliance.repository";
 import { round2 } from "../utils/number.util";
 
 export class CreatePoolUseCase {
   constructor(
     private routeRepo: RouteRepository,
     private poolRepo: PoolRepository,
+    private complianceRepo: ComplianceRepository,
   ) {}
 
   async execute(routeIds: string[]) {
@@ -18,22 +20,29 @@ export class CreatePoolUseCase {
     if (uniqueIds.size !== routeIds.length) {
       throw new Error("Duplicate routeIds are not allowed");
     }
+
     const routes = await this.routeRepo.findAll();
-    const TARGET = 89.3368;
 
-    const members = routeIds.map((id) => {
-      const r = routes.find((x) => x.routeId === id);
-      if (!r) throw new Error(`Route ${id} not found`);
+    const members = await Promise.all(
+      routeIds.map(async (id) => {
+        const r = routes.find((x) => x.routeId === id);
+        if (!r) throw new Error(`Route ${id} not found`);
 
-      const energy = r.fuelConsumption * 41000;
-      const cb = (TARGET - r.ghgIntensity) * energy;
+        const cbList = await this.complianceRepo.getCBByYear(r.year);
 
-      return {
-        shipId: r.routeId,
-        cbBefore: cb,
-        cbAfter: cb,
-      };
-    });
+        const cbData = cbList.find((c) => c.ship_id === r.routeId);
+
+        if (!cbData) throw new Error(`CB not found for ${r.routeId}`);
+
+        const cb = Number(cbData.cb_gco2eq);
+
+        return {
+          shipId: r.routeId,
+          cbBefore: cb,
+          cbAfter: cb,
+        };
+      }),
+    );
 
     const total = members.reduce((sum, m) => sum + m.cbBefore, 0);
     if (total < 0) throw new Error("Pool sum must be >= 0");
@@ -61,6 +70,11 @@ export class CreatePoolUseCase {
 
       if (d.cbAfter < d.cbBefore) {
         throw new Error("Deficit ship cannot exit worse");
+      }
+    }
+    for (const d of deficit) {
+      if (d.cbAfter < 0) {
+        throw new Error("Pool cannot cover all deficits");
       }
     }
 
