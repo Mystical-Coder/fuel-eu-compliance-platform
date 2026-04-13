@@ -42,7 +42,6 @@ export default function RoutesPage() {
     fetchRoutes();
   };
 
-  // ✅ UNIQUE VALUES FOR DROPDOWNS
   const vesselOptions = useMemo(
     () => [...new Set(routes.map((r) => r.vesselType))],
     [routes]
@@ -58,7 +57,6 @@ export default function RoutesPage() {
     [routes]
   );
 
-  // ✅ FILTERED DATA
   const filteredRoutes = routes.filter((r) => {
     return (
       (!filters.vesselType || r.vesselType === filters.vesselType) &&

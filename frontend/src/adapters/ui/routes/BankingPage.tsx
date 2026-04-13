@@ -21,11 +21,11 @@ export default function BankingPage() {
   const [amount, setAmount] = useState<string>("");
   const [result, setResult] = useState<BankingResult | null>(null);
   const [cbList, setCbList] = useState<CB[]>([]);
+  const [year, setYear] = useState(2024);
 
-  // 🔥 Fetch CB data
   useEffect(() => {
-    api.getCB(2024).then(setCbList);
-  }, []);
+    api.getCB(year).then(setCbList);
+  }, [year]);
 
   const selectedCB = cbList.find((c) => c.shipId === routeId);
 
@@ -49,7 +49,18 @@ export default function BankingPage() {
 
       {/* 🔹 CB TABLE */}
       <div className="mb-6">
-        <h3 className="mb-2">Current Compliance Balance (2024)</h3>
+        <div className="flex items-center justify-between mb-2">
+          <h3>Current Compliance Balance ({year})</h3>
+
+          <select
+            className="p-2 text-black rounded"
+            value={year}
+            onChange={(e) => setYear(Number(e.target.value))}
+          >
+            <option value={2024}>2024</option>
+            <option value={2025}>2025</option>
+          </select>
+        </div>
 
         <table className="w-full border border-gray-700 text-sm">
           <thead className="bg-gray-700">

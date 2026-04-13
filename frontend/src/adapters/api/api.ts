@@ -52,4 +52,8 @@ export const api = {
     });
     return res.json();
   },
+  getAdjustedCB: async (year: number) => {
+    const res = await fetch(`${BASE_URL}/compliance/adjusted-cb?year=${year}`);
+    return res.json();
+  },
 };
