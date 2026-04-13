@@ -39,4 +39,16 @@ export class BankingRepositoryImpl implements BankingRepository {
 
     return result.rows;
   }
+  async getRecords(year: number, shipId?: string) {
+    const query = `
+    SELECT ship_id, year, amount_gco2eq
+    FROM bank_entries
+    WHERE year = $1
+    ${shipId ? "AND ship_id = $2" : ""}
+  `;
+
+    const result = await pool.query(query, shipId ? [year, shipId] : [year]);
+
+    return result.rows;
+  }
 }
