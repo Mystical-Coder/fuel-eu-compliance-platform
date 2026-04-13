@@ -1,5 +1,6 @@
 import { BankingRepository } from "../ports/banking.repository";
 import { RouteRepository } from "../ports/route.repository";
+import { round2 } from "../utils/number.util";
 
 export class ApplyBankedUseCase {
   constructor(
@@ -43,9 +44,9 @@ export class ApplyBankedUseCase {
 
     return {
       routeId: route.routeId,
-      cb_before: Number(cbBefore.toFixed(2)),
+      cb_before: round2(cbBefore),
       applied: amount,
-      cb_after: Number(cbAfter.toFixed(2)),
+      cb_after: round2(cbAfter),
     };
   }
 }

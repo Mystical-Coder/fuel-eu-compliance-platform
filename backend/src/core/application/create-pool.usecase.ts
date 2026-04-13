@@ -1,5 +1,6 @@
 import { RouteRepository } from "../ports/route.repository";
 import { PoolRepository } from "../ports/pool.repository";
+import { round2 } from "../utils/number.util";
 
 export class CreatePoolUseCase {
   constructor(
@@ -92,8 +93,8 @@ export class CreatePoolUseCase {
       await this.poolRepo.saveMember(
         poolId,
         m.shipId,
-        Number(m.cbBefore.toFixed(2)),
-        Number(m.cbAfter.toFixed(2)),
+        round2(m.cbBefore),
+        round2(m.cbAfter),
       );
     }
 
@@ -101,11 +102,11 @@ export class CreatePoolUseCase {
 
     return {
       poolId,
-      poolSum: Number(poolSum.toFixed(2)),
+      poolSum: round2(poolSum),
       members: members.map((m) => ({
         shipId: m.shipId,
-        cbBefore: Number(m.cbBefore.toFixed(2)),
-        cbAfter: Number(m.cbAfter.toFixed(2)),
+        cbBefore: round2(m.cbBefore),
+        cbAfter: round2(m.cbAfter),
       })),
     };
   }

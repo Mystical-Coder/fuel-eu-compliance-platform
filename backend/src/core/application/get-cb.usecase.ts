@@ -1,5 +1,6 @@
 import { ComplianceRepository } from "../ports/compliance.repository";
 import { RouteRepository } from "../ports/route.repository";
+import { round2 } from "../utils/number.util";
 
 export class GetCBUseCase {
   constructor(
@@ -25,7 +26,7 @@ export class GetCBUseCase {
       result.push({
         shipId: route.routeId,
         year: route.year,
-        cb: Number(cb.toFixed(2)),
+        cb: round2(cb),
       });
     }
 

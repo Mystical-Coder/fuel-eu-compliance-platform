@@ -1,6 +1,6 @@
 import { ComplianceRepository } from "../ports/compliance.repository";
 import { BankingRepository } from "../ports/banking.repository";
-
+import { round2 } from "../utils/number.util";
 export class GetAdjustedCBUseCase {
   constructor(
     private complianceRepo: ComplianceRepository,
@@ -22,8 +22,8 @@ export class GetAdjustedCBUseCase {
 
       return {
         shipId: cb.ship_id,
-        cb: Number(cb.cb_gco2eq.toFixed(2)),
-        adjustedCB: Number(adjusted.toFixed(2)),
+        cb: round2(cb.cb_gco2eq),
+        adjustedCB: round2(adjusted),
       };
     });
   }
