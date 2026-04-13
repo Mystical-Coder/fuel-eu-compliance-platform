@@ -8,6 +8,11 @@ export class CreatePoolUseCase {
   ) {}
 
   async execute(routeIds: string[]) {
+    const uniqueIds = new Set(routeIds);
+
+    if (uniqueIds.size !== routeIds.length) {
+      throw new Error("Duplicate routeIds are not allowed");
+    }
     const routes = await this.routeRepo.findAll();
     const TARGET = 89.3368;
 
