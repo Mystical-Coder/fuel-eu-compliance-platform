@@ -12,4 +12,8 @@ export const api = {
     });
     return res.json();
   },
+  getComparison: async () => {
+    const res = await fetch(`${BASE_URL}/routes/comparison`);
+    return res.json();
+  },
 };
