@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../../api/api";
 
 type BankingResult = {
@@ -10,26 +10,34 @@ type BankingResult = {
   error?: string;
 };
 
+type CB = {
+  shipId: string;
+  year: number;
+  cb: number;
+};
+
 export default function BankingPage() {
   const [routeId, setRouteId] = useState("");
   const [amount, setAmount] = useState<string>("");
   const [result, setResult] = useState<BankingResult | null>(null);
+  const [cbList, setCbList] = useState<CB[]>([]);
+
+  // 🔥 Fetch CB data
+  useEffect(() => {
+    api.getCB(2024).then(setCbList);
+  }, []);
+
+  const selectedCB = cbList.find((c) => c.shipId === routeId);
 
   const handleBank = async () => {
-    if (!routeId) {
-      alert("Enter route ID");
-      return;
-    }
+    if (!routeId) return alert("Enter route ID");
 
     const res = await api.bank(routeId);
     setResult(res);
   };
 
   const handleApply = async () => {
-    if (!routeId || !amount) {
-      alert("Enter route ID and amount");
-      return;
-    }
+    if (!routeId || !amount) return alert("Enter route ID and amount");
 
     const res = await api.apply(routeId, Number(amount));
     setResult(res);
@@ -39,7 +47,36 @@ export default function BankingPage() {
     <div>
       <h2 className="text-xl font-semibold mb-6">Banking</h2>
 
-      {/* Input Section */}
+      {/* 🔹 CB TABLE */}
+      <div className="mb-6">
+        <h3 className="mb-2">Current Compliance Balance (2024)</h3>
+
+        <table className="w-full border border-gray-700 text-sm">
+          <thead className="bg-gray-700">
+            <tr>
+              <th className="px-4 py-2 text-left">Ship</th>
+              <th className="px-4 py-2 text-left">CB</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {cbList.map((c) => (
+              <tr key={c.shipId} className="border-t border-gray-700">
+                <td className="px-4 py-2">{c.shipId}</td>
+                <td
+                  className={`px-4 py-2 ${
+                    c.cb >= 0 ? "text-green-400" : "text-red-400"
+                  }`}
+                >
+                  {c.cb}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* 🔹 INPUT SECTION */}
       <div className="bg-gray-800 p-4 rounded mb-6 space-y-4">
         <input
           type="text"
@@ -59,29 +96,40 @@ export default function BankingPage() {
 
         <div className="flex gap-4">
           <button
-            className="bg-green-500 px-4 py-2 rounded hover:bg-green-600"
+            className="bg-green-500 px-4 py-2 rounded hover:bg-green-600 disabled:bg-gray-500"
             onClick={handleBank}
+            disabled={!selectedCB || selectedCB.cb <= 0} // ✅ disable
           >
             Bank Surplus
           </button>
 
           <button
-            className="bg-yellow-500 px-4 py-2 rounded hover:bg-yellow-600"
+            className="bg-yellow-500 px-4 py-2 rounded hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleApply}
+            disabled={!selectedCB || selectedCB.cb >= 0}
           >
             Apply Banking
           </button>
         </div>
       </div>
 
-      {/* Result Section */}
-      {result && (
-        <div className="bg-gray-800 p-4 rounded">
+      {/* 🔹 ERROR */}
+      {result?.error && <div className="text-red-400 mb-4">{result.error}</div>}
+
+      {/* 🔹 KPI DISPLAY */}
+      {result && !result.error && (
+        <div className="bg-gray-800 p-4 rounded space-y-2">
           <h3 className="mb-2">Result</h3>
 
-          <pre className="text-sm text-gray-300">
-            {JSON.stringify(result, null, 2)}
-          </pre>
+          {result.banked !== undefined && <p>Banked: {result.banked}</p>}
+
+          {result.cb_before !== undefined && (
+            <>
+              <p>CB Before: {result.cb_before}</p>
+              <p>Applied: {result.applied}</p>
+              <p>CB After: {result.cb_after}</p>
+            </>
+          )}
         </div>
       )}
     </div>

@@ -38,4 +38,8 @@ export const api = {
     });
     return res.json();
   },
+  getCB: async (year: number) => {
+    const res = await fetch(`${BASE_URL}/compliance/cb?year=${year}`);
+    return res.json();
+  },
 };
