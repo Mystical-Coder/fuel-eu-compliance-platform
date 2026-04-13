@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api } from "@/adapters/api/api";
 
 type Route = {
@@ -15,6 +15,11 @@ type Route = {
 
 export default function RoutesPage() {
   const [routes, setRoutes] = useState<Route[]>([]);
+  const [filters, setFilters] = useState({
+    vesselType: "",
+    fuelType: "",
+    year: "",
+  });
   const [loading, setLoading] = useState(true);
 
   const fetchRoutes = async () => {
@@ -37,12 +42,86 @@ export default function RoutesPage() {
     fetchRoutes();
   };
 
+  // ✅ UNIQUE VALUES FOR DROPDOWNS
+  const vesselOptions = useMemo(
+    () => [...new Set(routes.map((r) => r.vesselType))],
+    [routes]
+  );
+
+  const fuelOptions = useMemo(
+    () => [...new Set(routes.map((r) => r.fuelType))],
+    [routes]
+  );
+
+  const yearOptions = useMemo(
+    () => [...new Set(routes.map((r) => r.year.toString()))],
+    [routes]
+  );
+
+  // ✅ FILTERED DATA
+  const filteredRoutes = routes.filter((r) => {
+    return (
+      (!filters.vesselType || r.vesselType === filters.vesselType) &&
+      (!filters.fuelType || r.fuelType === filters.fuelType) &&
+      (!filters.year || r.year.toString() === filters.year)
+    );
+  });
+
   if (loading) return <div>Loading...</div>;
 
   return (
     <div>
       <h2 className="text-xl font-semibold mb-6">Routes</h2>
 
+      {/* 🔹 FILTERS */}
+      <div className="flex gap-4 mb-6 flex-wrap">
+        <select
+          className="p-2 text-black rounded"
+          value={filters.vesselType}
+          onChange={(e) =>
+            setFilters({ ...filters, vesselType: e.target.value })
+          }
+        >
+          <option value="">All Vessels</option>
+          {vesselOptions.map((v) => (
+            <option key={v} value={v}>
+              {v}
+            </option>
+          ))}
+        </select>
+
+        <select
+          className="p-2 text-black rounded"
+          value={filters.fuelType}
+          onChange={(e) =>
+            setFilters({ ...filters, fuelType: e.target.value })
+          }
+        >
+          <option value="">All Fuels</option>
+          {fuelOptions.map((f) => (
+            <option key={f} value={f}>
+              {f}
+            </option>
+          ))}
+        </select>
+
+        <select
+          className="p-2 text-black rounded"
+          value={filters.year}
+          onChange={(e) =>
+            setFilters({ ...filters, year: e.target.value })
+          }
+        >
+          <option value="">All Years</option>
+          {yearOptions.map((y) => (
+            <option key={y} value={y}>
+              {y}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* 🔹 TABLE */}
       <div className="overflow-x-auto mt-4">
         <table className="w-full border border-gray-700 text-sm">
           <thead className="bg-gray-700 text-gray-200">
@@ -60,7 +139,7 @@ export default function RoutesPage() {
           </thead>
 
           <tbody>
-            {routes.map((r) => (
+            {filteredRoutes.map((r) => (
               <tr
                 key={r.routeId}
                 className="border-t border-gray-700 hover:bg-gray-800"
@@ -91,6 +170,13 @@ export default function RoutesPage() {
             ))}
           </tbody>
         </table>
+
+        {/* 🔹 EMPTY STATE */}
+        {filteredRoutes.length === 0 && (
+          <div className="text-center text-gray-400 mt-4">
+            No routes found
+          </div>
+        )}
       </div>
     </div>
   );
