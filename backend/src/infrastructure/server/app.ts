@@ -5,6 +5,7 @@ import bankingController from "../../adapters/inbound/http/banking.controller";
 import poolsController from "../../adapters/inbound/http/pools.controller";
 
 const app = express();
+export default app;
 
 app.use(express.json());
 app.use("/", routesController);
