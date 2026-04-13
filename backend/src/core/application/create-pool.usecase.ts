@@ -8,6 +8,10 @@ export class CreatePoolUseCase {
   ) {}
 
   async execute(routeIds: string[]) {
+    if (!routeIds || routeIds.length === 0) {
+      throw new Error("At least one routeId is required to create a pool");
+    }
+
     const uniqueIds = new Set(routeIds);
 
     if (uniqueIds.size !== routeIds.length) {
