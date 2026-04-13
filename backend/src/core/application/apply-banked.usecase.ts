@@ -4,7 +4,7 @@ import { RouteRepository } from "../ports/route.repository";
 export class ApplyBankedUseCase {
   constructor(
     private routeRepo: RouteRepository,
-    private bankingRepo: BankingRepository
+    private bankingRepo: BankingRepository,
   ) {}
 
   async execute(routeId: string, amount: number) {
@@ -19,6 +19,12 @@ export class ApplyBankedUseCase {
 
     if (cbBefore >= 0) {
       throw new Error("No deficit to apply");
+    }
+
+    const deficit = -cbBefore;
+
+    if (amount > deficit) {
+      throw new Error("Amount exceeds required deficit");
     }
 
     const available = await this.bankingRepo.getTotalBankedAll(route.year);
