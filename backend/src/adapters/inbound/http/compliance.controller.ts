@@ -41,10 +41,14 @@ router.get("/compliance/adjusted-cb", async (req, res) => {
   try {
     const { year, shipId } = req.query;
 
+    if (!year) {
+      return res.status(400).json({ error: "year is required" });
+    }
+
     const data = await getAdjustedCBUseCase.execute(Number(year));
 
     if (shipId) {
-      return res.json(data.filter((d) => d.shipId === shipId));
+      return res.json(data.filter((d) => d.shipId === String(shipId)));
     }
 
     res.json(data);
@@ -56,10 +60,14 @@ router.get("/compliance/cb", async (req, res) => {
   try {
     const { year, shipId } = req.query;
 
+    if (!year) {
+      return res.status(400).json({ error: "year is required" });
+    }
+
     const data = await getCBUseCase.execute(Number(year));
 
     if (shipId) {
-      return res.json(data.filter((d) => d.shipId === shipId));
+      return res.json(data.filter((d) => d.shipId === String(shipId)));
     }
 
     res.json(data);
