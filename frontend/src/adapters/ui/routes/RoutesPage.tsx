@@ -13,6 +13,17 @@ type Route = {
   isBaseline?: boolean;
 };
 
+type CreateRoutePayload = {
+  routeId: string;
+  vesselType: string;
+  fuelType: string;
+  year: number;
+  ghgIntensity: number;
+  fuelConsumption: number;
+  distance: number;
+  totalEmissions: number;
+};
+
 export default function RoutesPage() {
   const [routes, setRoutes] = useState<Route[]>([]);
   const [filters, setFilters] = useState({
@@ -21,6 +32,17 @@ export default function RoutesPage() {
     year: "",
   });
   const [loading, setLoading] = useState(true);
+
+  const [newRoute, setNewRoute] = useState({
+    routeId: "",
+    vesselType: "",
+    fuelType: "",
+    year: "",
+    ghgIntensity: "",
+    fuelConsumption: "",
+    distance: "",
+    totalEmissions: "",
+  });
 
   const fetchRoutes = async () => {
     try {
@@ -39,6 +61,34 @@ export default function RoutesPage() {
 
   const handleBaseline = async (routeId: string) => {
     await api.setBaseline(routeId);
+    fetchRoutes();
+  };
+
+  const handleCreateRoute = async () => {
+    const payload: CreateRoutePayload = {
+      routeId: newRoute.routeId,
+      vesselType: newRoute.vesselType,
+      fuelType: newRoute.fuelType,
+      year: Number(newRoute.year),
+      ghgIntensity: Number(newRoute.ghgIntensity),
+      fuelConsumption: Number(newRoute.fuelConsumption),
+      distance: Number(newRoute.distance),
+      totalEmissions: Number(newRoute.totalEmissions),
+    };
+
+    await api.createRoute(payload);
+
+    setNewRoute({
+      routeId: "",
+      vesselType: "",
+      fuelType: "",
+      year: "",
+      ghgIntensity: "",
+      fuelConsumption: "",
+      distance: "",
+      totalEmissions: "",
+    });
+
     fetchRoutes();
   };
 
@@ -119,7 +169,7 @@ export default function RoutesPage() {
       </div>
 
       <div className="overflow-x-auto mt-4">
-        <table className="w-full border border-gray-700 text-sm">
+        <table className="w-full border border-gray-700 text-sm rounded overflow-hidden">
           <thead className="bg-gray-700 text-gray-200">
             <tr>
               <th className="px-4 py-2 text-left">Route</th>
@@ -136,10 +186,7 @@ export default function RoutesPage() {
 
           <tbody>
             {filteredRoutes.map((r) => (
-              <tr
-                key={r.routeId}
-                className="border-t border-gray-700 hover:bg-gray-800"
-              >
+              <tr key={r.routeId} className="border-t border-gray-700 hover:bg-gray-800">
                 <td className="px-4 py-2">{r.routeId}</td>
                 <td className="px-4 py-2">{r.vesselType}</td>
                 <td className="px-4 py-2">{r.fuelType}</td>
@@ -150,9 +197,7 @@ export default function RoutesPage() {
                 <td className="px-4 py-2">{r.totalEmissions}</td>
                 <td className="px-4 py-2">
                   {r.isBaseline ? (
-                    <span className="text-green-400 font-semibold">
-                      Baseline
-                    </span>
+                    <span className="text-green-400 font-semibold">Baseline</span>
                   ) : (
                     <button
                       className="bg-blue-500 px-3 py-1 rounded hover:bg-blue-600"
@@ -172,6 +217,25 @@ export default function RoutesPage() {
             No routes found
           </div>
         )}
+      </div>
+
+      <div className="bg-gray-800 p-4 rounded mt-6 space-y-4">
+        <h3 className="text-lg font-semibold">Create Route</h3>
+
+        <div className="grid grid-cols-2 gap-4">
+          <input className="p-2 text-black rounded" placeholder="Route ID (e.g. R008)" value={newRoute.routeId} onChange={(e) => setNewRoute({ ...newRoute, routeId: e.target.value })} />
+          <input className="p-2 text-black rounded" placeholder="Vessel Type (e.g. Container)" value={newRoute.vesselType} onChange={(e) => setNewRoute({ ...newRoute, vesselType: e.target.value })} />
+          <input className="p-2 text-black rounded" placeholder="Fuel Type (e.g. LNG)" value={newRoute.fuelType} onChange={(e) => setNewRoute({ ...newRoute, fuelType: e.target.value })} />
+          <input type="number" className="p-2 text-black rounded" placeholder="Year (e.g. 2025)" value={newRoute.year} onChange={(e) => setNewRoute({ ...newRoute, year: e.target.value })} />
+          <input type="number" className="p-2 text-black rounded" placeholder="GHG Intensity (e.g. 90.5)" value={newRoute.ghgIntensity} onChange={(e) => setNewRoute({ ...newRoute, ghgIntensity: e.target.value })} />
+          <input type="number" className="p-2 text-black rounded" placeholder="Fuel Consumption (e.g. 5000)" value={newRoute.fuelConsumption} onChange={(e) => setNewRoute({ ...newRoute, fuelConsumption: e.target.value })} />
+          <input type="number" className="p-2 text-black rounded" placeholder="Distance (e.g. 10000)" value={newRoute.distance} onChange={(e) => setNewRoute({ ...newRoute, distance: e.target.value })} />
+          <input type="number" className="p-2 text-black rounded" placeholder="Total Emissions (e.g. 2000)" value={newRoute.totalEmissions} onChange={(e) => setNewRoute({ ...newRoute, totalEmissions: e.target.value })} />
+        </div>
+
+        <button className="bg-green-500 px-4 py-2 rounded hover:bg-green-600" onClick={handleCreateRoute}>
+          Add Route
+        </button>
       </div>
     </div>
   );

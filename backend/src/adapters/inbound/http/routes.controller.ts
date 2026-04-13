@@ -3,7 +3,7 @@ import { GetRoutesUseCase } from "../../../core/application/get-routes.usecase";
 import { RouteRepositoryImpl } from "../../outbound/postgres/route.repository";
 import { SetBaselineUseCase } from "../../../core/application/set-baseline.usecase";
 import { GetComparisonUseCase } from "../../../core/application/get-comparison.usecase";
-
+import { CreateRouteUseCase } from "../../../core/application/create-route.usecase";
 
 const router = express.Router();
 
@@ -11,7 +11,7 @@ const routeRepo = new RouteRepositoryImpl();
 const getRoutesUseCase = new GetRoutesUseCase(routeRepo);
 const setBaselineUseCase = new SetBaselineUseCase(routeRepo);
 const getComparisonUseCase = new GetComparisonUseCase(routeRepo);
-
+const createRouteUseCase = new CreateRouteUseCase(routeRepo);
 
 router.get("/routes", async (req, res) => {
   const data = await getRoutesUseCase.execute();
@@ -34,5 +34,12 @@ router.get("/routes/comparison", async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 });
-
+router.post("/routes", async (req, res) => {
+  try {
+    const data = await createRouteUseCase.execute(req.body);
+    res.json(data);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+});
 export default router;
