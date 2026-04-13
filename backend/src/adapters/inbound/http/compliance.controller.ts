@@ -28,15 +28,6 @@ router.get("/compliance/cb/:routeId", async (req, res) => {
   }
 });
 
-router.get("/compliance/cb", async (req, res) => {
-  try {
-    const year = Number(req.query.year);
-    const data = await getCBUseCase.execute(year);
-    res.json(data);
-  } catch (err: any) {
-    res.status(400).json({ error: err.message });
-  }
-});
 router.get("/compliance/adjusted-cb", async (req, res) => {
   try {
     const { year, shipId } = req.query;
