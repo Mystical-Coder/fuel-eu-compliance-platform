@@ -73,37 +73,29 @@ export default function PoolingPage() {
           </thead>
 
           <tbody>
-            {cbList.length === 0 ? (
-              <tr>
-                <td colSpan={3} className="text-center p-4 text-gray-400">
-                  No data available
+            {cbList.map((c) => (
+              <tr key={c.shipId} className="border-t border-gray-700">
+                <td className="px-4 py-2">{c.shipId}</td>
+
+                <td
+                  className={`px-4 py-2 ${
+                    c.cb >= 0 ? "text-green-400" : "text-red-400"
+                  }`}
+                >
+                  {format(c.cb)}
+                </td>
+
+                <td
+                  className={`px-4 py-2 ${
+                    c.adjustedCB >= 0
+                      ? "text-green-400"
+                      : "text-red-400"
+                  }`}
+                >
+                  {format(c.adjustedCB)}
                 </td>
               </tr>
-            ) : (
-              cbList.map((c) => (
-                <tr key={c.shipId} className="border-t border-gray-700">
-                  <td className="px-4 py-2">{c.shipId}</td>
-
-                  <td
-                    className={`px-4 py-2 ${
-                      c.cb >= 0 ? "text-green-400" : "text-red-400"
-                    }`}
-                  >
-                    {format(c.cb)}
-                  </td>
-
-                  <td
-                    className={`px-4 py-2 ${
-                      c.adjustedCB >= 0
-                        ? "text-green-400"
-                        : "text-red-400"
-                    }`}
-                  >
-                    {format(c.adjustedCB)}
-                  </td>
-                </tr>
-              ))
-            )}
+            ))}
           </tbody>
         </table>
       </div>

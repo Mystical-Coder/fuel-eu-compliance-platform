@@ -102,7 +102,7 @@ export default function BankingPage() {
               <tr key={c.shipId} className="border-t border-gray-700">
                 <td className="px-4 py-2">{c.shipId}</td>
                 <td
-                  className={`px-4 py-2 font-medium ${
+                  className={`px-4 py-2 ${
                     c.cb >= 0 ? "text-green-400" : "text-red-400"
                   }`}
                 >
@@ -131,7 +131,7 @@ export default function BankingPage() {
               {records.map((r, i) => (
                 <tr key={i} className="border-t border-gray-700">
                   <td
-                    className={`px-4 py-2 font-medium ${
+                    className={`px-4 py-2 ${
                       r.amount >= 0
                         ? "text-green-400"
                         : "text-red-400"
@@ -199,7 +199,9 @@ export default function BankingPage() {
       </div>
 
       {result?.error && (
-        <div className="text-red-400 mb-4">{result.error}</div>
+        <div className="bg-red-900 text-red-300 p-3 rounded mb-4">
+          {result.error}
+        </div>
       )}
 
       {result && !result.error && (
@@ -207,14 +209,26 @@ export default function BankingPage() {
           <h3 className="mb-2 text-lg font-semibold">Result</h3>
 
           {result.banked !== undefined && (
-            <p>Banked: {format(result.banked)}</p>
+            <p>
+              <span className="text-gray-400">Banked:</span>{" "}
+              {format(result.banked)}
+            </p>
           )}
 
           {result.cb_before !== undefined && (
             <>
-              <p>CB Before: {format(result.cb_before)}</p>
-              <p>Applied: {format(result.applied!)}</p>
-              <p>CB After: {format(result.cb_after!)}</p>
+              <p>
+                <span className="text-gray-400">CB Before:</span>{" "}
+                {format(result.cb_before)}
+              </p>
+              <p>
+                <span className="text-gray-400">Applied:</span>{" "}
+                {format(result.applied!)}
+              </p>
+              <p>
+                <span className="text-gray-400">CB After:</span>{" "}
+                {format(result.cb_after!)}
+              </p>
             </>
           )}
         </div>
