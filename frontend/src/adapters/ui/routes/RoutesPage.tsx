@@ -71,7 +71,6 @@ export default function RoutesPage() {
     <div>
       <h2 className="text-xl font-semibold mb-6">Routes</h2>
 
-      {/* 🔹 FILTERS */}
       <div className="flex gap-4 mb-6 flex-wrap">
         <select
           className="p-2 text-black rounded"
@@ -119,7 +118,6 @@ export default function RoutesPage() {
         </select>
       </div>
 
-      {/* 🔹 TABLE */}
       <div className="overflow-x-auto mt-4">
         <table className="w-full border border-gray-700 text-sm">
           <thead className="bg-gray-700 text-gray-200">
@@ -169,7 +167,6 @@ export default function RoutesPage() {
           </tbody>
         </table>
 
-        {/* 🔹 EMPTY STATE */}
         {filteredRoutes.length === 0 && (
           <div className="text-center text-gray-400 mt-4">
             No routes found
