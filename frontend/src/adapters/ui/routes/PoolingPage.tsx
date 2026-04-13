@@ -26,6 +26,9 @@ export default function PoolingPage() {
   const [cbList, setCbList] = useState<AdjustedCB[]>([]);
   const [year, setYear] = useState(2024);
 
+  const format = (num: number) =>
+    new Intl.NumberFormat().format(num);
+
   useEffect(() => {
     api.getAdjustedCB(year).then(setCbList);
   }, [year]);
@@ -33,7 +36,10 @@ export default function PoolingPage() {
   const handleCreatePool = async () => {
     if (!input) return alert("Enter route IDs");
 
-    const routeIds = input.split(",").map((id) => id.trim());
+    const routeIds = input
+      .split(",")
+      .map((id) => id.trim())
+      .filter(Boolean);
 
     const res = await api.createPool(routeIds);
     setResult(res);
@@ -56,7 +62,8 @@ export default function PoolingPage() {
             <option value={2025}>2025</option>
           </select>
         </div>
-        <table className="w-full border border-gray-700 text-sm">
+
+        <table className="w-full border border-gray-700 text-sm rounded overflow-hidden">
           <thead className="bg-gray-700 text-gray-200">
             <tr>
               <th className="px-4 py-2 text-left">Ship</th>
@@ -66,31 +73,40 @@ export default function PoolingPage() {
           </thead>
 
           <tbody>
-            {cbList.map((c) => (
-              <tr key={c.shipId} className="border-t border-gray-700">
-                <td className="px-4 py-2">{c.shipId}</td>
-
-                <td
-                  className={`px-4 py-2 ${
-                    c.cb >= 0 ? "text-green-400" : "text-red-400"
-                  }`}
-                >
-                  {c.cb}
-                </td>
-
-                <td
-                  className={`px-4 py-2 ${
-                    c.adjustedCB >= 0 ? "text-green-400" : "text-red-400"
-                  }`}
-                >
-                  {c.adjustedCB}
+            {cbList.length === 0 ? (
+              <tr>
+                <td colSpan={3} className="text-center p-4 text-gray-400">
+                  No data available
                 </td>
               </tr>
-            ))}
+            ) : (
+              cbList.map((c) => (
+                <tr key={c.shipId} className="border-t border-gray-700">
+                  <td className="px-4 py-2">{c.shipId}</td>
+
+                  <td
+                    className={`px-4 py-2 ${
+                      c.cb >= 0 ? "text-green-400" : "text-red-400"
+                    }`}
+                  >
+                    {format(c.cb)}
+                  </td>
+
+                  <td
+                    className={`px-4 py-2 ${
+                      c.adjustedCB >= 0
+                        ? "text-green-400"
+                        : "text-red-400"
+                    }`}
+                  >
+                    {format(c.adjustedCB)}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
-
 
       <div className="bg-gray-800 p-4 rounded mb-6 space-y-4">
         <input
@@ -102,14 +118,19 @@ export default function PoolingPage() {
         />
 
         <button
-          className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600"
+          disabled={!input}
+          className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
           onClick={handleCreatePool}
         >
           Create Pool
         </button>
       </div>
 
-      {result?.error && <div className="text-red-400 mb-4">{result.error}</div>}
+      {result?.error && (
+        <div className="bg-red-900 text-red-300 p-3 rounded mb-4">
+          {result.error}
+        </div>
+      )}
 
       {result && result.members && (
         <div className="bg-gray-800 p-4 rounded">
@@ -119,14 +140,16 @@ export default function PoolingPage() {
             Pool Sum:{" "}
             <span
               className={
-                result.poolSum! >= 0 ? "text-green-400" : "text-red-400"
+                result.poolSum! >= 0
+                  ? "text-green-400"
+                  : "text-red-400"
               }
             >
-              {result.poolSum}
+              {format(result.poolSum!)}
             </span>
           </p>
 
-          <table className="w-full border border-gray-700 text-sm">
+          <table className="w-full border border-gray-700 text-sm rounded overflow-hidden">
             <thead className="bg-gray-700 text-gray-200">
               <tr>
                 <th className="px-4 py-2 text-left">Ship</th>
@@ -139,8 +162,12 @@ export default function PoolingPage() {
               {result.members.map((m) => (
                 <tr key={m.shipId} className="border-t border-gray-700">
                   <td className="px-4 py-2">{m.shipId}</td>
-                  <td className="px-4 py-2">{m.cbBefore}</td>
-                  <td className="px-4 py-2">{m.cbAfter}</td>
+                  <td className="px-4 py-2">
+                    {format(m.cbBefore)}
+                  </td>
+                  <td className="px-4 py-2">
+                    {format(m.cbAfter)}
+                  </td>
                 </tr>
               ))}
             </tbody>
