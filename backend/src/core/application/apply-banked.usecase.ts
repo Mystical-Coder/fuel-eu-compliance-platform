@@ -33,7 +33,7 @@ export class ApplyBankedUseCase {
       throw new Error("Not enough banked amount");
     }
 
-    await this.bankingRepo.deductBank(route.routeId, route.year, amount);
+    await this.bankingRepo.deductBank(route.year, amount);
 
     const cbAfter = cbBefore + amount;
 

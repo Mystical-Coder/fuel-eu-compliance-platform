@@ -21,11 +21,11 @@ export class BankingRepositoryImpl implements BankingRepository {
     return Number(result.rows[0].total);
   }
 
-  async deductBank(shipId: string, year: number, amount: number) {
+  async deductBank(year: number, amount: number) {
     await pool.query(
       `INSERT INTO bank_entries (ship_id, year, amount_gco2eq)
      VALUES ($1, $2, $3)`,
-      [shipId, year, -amount],
+      ["GLOBAL", year, -amount],
     );
   }
   async getBankedByYear(year: number) {

@@ -21,7 +21,7 @@ export class BankSurplusUseCase {
       throw new Error("Cannot bank deficit");
     }
 
-    await this.bankingRepo.saveBank(route.routeId, route.year, cb);
+    await this.bankingRepo.saveBank("GLOBAL", route.year, cb);
 
     return {
       routeId: route.routeId,
