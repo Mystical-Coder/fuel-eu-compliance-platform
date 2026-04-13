@@ -16,6 +16,11 @@ const applyBankedUseCase = new ApplyBankedUseCase(routeRepo, bankingRepo);
 router.post("/banking/bank", async (req, res) => {
   try {
     const { routeId } = req.body;
+    if (!routeId || typeof routeId !== "string") {
+      return res.status(400).json({
+        error: "Valid routeId is required",
+      });
+    }
 
     const data = await bankSurplusUseCase.execute(routeId);
 
